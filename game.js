@@ -65,6 +65,9 @@
     game.state.add("GameState",GameState);
     game.state.start("BootState");
 
+    // Declare pathGraphics at a higher scope
+    let pathGraphics;
+
     function createGame() {
         pos = 0;
         firstTime = true;
@@ -72,6 +75,17 @@
         platforms_array = [];
         game.world.setBounds(0, 0, game_length, game_height);
         game.physics.startSystem(Phaser.Physics.ARCADE);
+
+        // Initialize pathGraphics if it doesn't exist
+        if (!pathGraphics) {
+            pathGraphics = game.add.graphics(0, 0);
+        } else {
+            // Clear the previous path graphics
+            pathGraphics.clear();
+        }
+
+        // Reset the previous position for path drawing
+        this.previousPosition = null;
 
         // 15 platforms
         for (let i = 0; i < 14; i++) {
@@ -136,10 +150,8 @@
                 onGround = false;
                 if (pos < moves.length) {
                     const mul = Math.sqrt(moves[pos]);
-                    
-                    // Increase these values slightly to speed up the frog
-                    const vely = -fly_step * mul * 0.9; // Increase vertical velocity
-                    const velx = move_step * mul * 0.7; // Increase horizontal velocity
+                    const vely = -fly_step * mul * 0.6; // Adjusted for speed
+                    const velx = move_step * mul * 0.6; // Adjusted for speed
                     
                     player.body.velocity.y = vely;
                     player.body.velocity.x = velx;
@@ -148,18 +160,22 @@
                     // Display the current move
                     temptext.innerHTML += `<br>Jump ${pos + 1}: ${moves[pos]}`;
                     
+                    // Add a marker at the current position
+                    addPathMarker(player.x, ground_height);
+                    
                     pos++;
-                } else {
-                    if (firstTime && player.body.x >= 14 * 60 + 15) {
-                        flag.animations.play('celebrate', 5);
-                        firstTime = false;
-                        sun.body.enable = false;
-                        player.body.velocity.x = 0;
-                        
-                        // Display the final solution message
-                        let solution = "SOLUTION";
-                        temptext.innerHTML += `<br><br>${solution.bold()}<br>${moves}`;
-                    }
+                } else if (firstTime) {
+                    // Ensure the last jump path is drawn
+                    addPathMarker(player.x, ground_height);
+                    
+                    flag.animations.play('celebrate', 5);
+                    firstTime = false;
+                    sun.body.enable = false;
+                    player.body.velocity.x = 0;
+                    
+                    // Display the final solution message
+                    let solution = "SOLUTION";
+                    temptext.innerHTML += `<br><br>${solution.bold()}<br>${moves}`;
                 }
             }
     
@@ -169,6 +185,26 @@
                 sun.body.velocity.x = 0;
             }
         }
+    }
+
+    function addPathMarker(x, y) {
+        // Store the position of each jump
+        if (!this.previousPosition) {
+            this.previousPosition = { x: player.x, y: ground_height };
+        }
+
+        // Calculate control point for the Bezier curve
+        const controlX = (this.previousPosition.x + x) / 2;
+        const controlY = this.previousPosition.y - 50; // Adjust height for the arc
+
+        // Draw a quadratic Bezier curve
+        pathGraphics.lineStyle(2, 0xff0000, 1); // Red color, 2px width
+        pathGraphics.moveTo(this.previousPosition.x, this.previousPosition.y);
+        pathGraphics.quadraticCurveTo(controlX, controlY, x, y);
+        pathGraphics.endFill();
+
+        // Update the previous position
+        this.previousPosition = { x, y };
     }
 
     function groundOverlap() {

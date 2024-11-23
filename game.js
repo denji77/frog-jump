@@ -81,7 +81,7 @@
         clouds = game.add.group();
         let change = 15;
         for (let i = 70; i < game_length; i += 240) {
-            let cloud = clouds.create(i, change + ground_height - 8 * unit, 'cloud');
+            let cloud = clouds.create(i, change + ground_height - 7 * unit, 'cloud');
             game.physics.arcade.enable(cloud);
             cloud.body.velocity.x = -20; // Move clouds to the left
             change *= -1;
@@ -94,7 +94,7 @@
             cloud.body.velocity.x = -20; // Move clouds to the left
         }
 
-        sun = game.add.sprite(16 * unit, ground_height - 13.5 * unit, 'sun');
+        sun = game.add.sprite(16 * unit, ground_height - 13 * unit, 'sun');
         game.physics.arcade.enable(sun);
 
         platforms = game.add.group();
@@ -136,8 +136,11 @@
                 onGround = false;
                 if (pos < moves.length) {
                     const mul = Math.sqrt(moves[pos]);
-                    const vely = -fly_step * mul;
-                    const velx = move_step * mul;
+                    
+                    // Increase these values slightly to speed up the frog
+                    const vely = -fly_step * mul * 0.9; // Increase vertical velocity
+                    const velx = move_step * mul * 0.7; // Increase horizontal velocity
+                    
                     player.body.velocity.y = vely;
                     player.body.velocity.x = velx;
                     player.body.gravity.y = (2 * -vely * velx) / (60 * moves[pos] + 1);
@@ -159,7 +162,7 @@
                     }
                 }
             }
-
+    
             if (sun.body.enable && player.body.x > 15 * unit) {
                 sun.body.velocity.x = player.body.velocity.x;
             } else {

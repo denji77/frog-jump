@@ -38,7 +38,17 @@ body {
 }
 
 .navbar {
-    background-image: url('../assets/8859.jpg');
+    background-image: url('assets/8859.jpg');
     background-size: cover;
     background-position: center;
+    padding: 10px;
+}
+
+.navbar-text {
+    font-size: 32px;
+    font-weight: bold;
+    color: #b93737;
+    text-shadow: 2px 2px 4px rgba(185, 142, 142, 0.5);
+    font-family: 'Arial', sans-serif;
+    margin-left: 10px;
 }

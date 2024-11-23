@@ -129,31 +129,36 @@
     function updateState() {
         game.physics.arcade.collide(player, platforms, groundOverlap);
         game.camera.follow(player, Phaser.Camera.FOLLOW_TOPDOWN);
-         // if player movalbe 
+        
+        // if player is movable
         if (player.body.enable) {
             if (onGround) {
                 onGround = false;
-                if(pos<moves.length) {
+                if (pos < moves.length) {
                     const mul = Math.sqrt(moves[pos]);
                     const vely = -fly_step * mul;
                     const velx = move_step * mul;
                     player.body.velocity.y = vely;
                     player.body.velocity.x = velx;
-                    player.body.gravity.y = ( 2 * -vely * velx ) / ( 60 * moves[pos] + 1 );
+                    player.body.gravity.y = (2 * -vely * velx) / (60 * moves[pos] + 1);
                     pos++;
-                } else{
-                    if(firstTime){
+                } else {
+                    if (firstTime && player.body.x >= 14 * 60 + 15) {
                         flag.animations.play('celebrate', 5);
                         firstTime = false;
                         sun.body.enable = false;
                         player.body.velocity.x = 0;
+                        
+                        // Display the solution after reaching the finish line
+                        let solution = "SOLUTION";
+                        temptext.innerHTML = temptext.innerHTML + "<br><br>" + solution.bold() + "<br>" + moves;
                     }
                 }
             }
 
-            if(sun.body.enable && player.body.x > 15*unit){
+            if (sun.body.enable && player.body.x > 15 * unit) {
                 sun.body.velocity.x = player.body.velocity.x;
-            } else{
+            } else {
                 sun.body.velocity.x = 0;
             }
         }
@@ -164,10 +169,8 @@
     }
 
     solve.onclick = function () {
-        if (!player.body.enable){
+        if (!player.body.enable) {
             moves = solveProblem(platforms_array);
-            let solution = "SOLUTION"
-            temptext.innerHTML = temptext.innerHTML + "<br><br>" + solution.bold() +"<br>" + moves;
             player.body.enable = true; // make player movable
         }
     };

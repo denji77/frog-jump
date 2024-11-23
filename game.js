@@ -141,6 +141,10 @@
                     player.body.velocity.y = vely;
                     player.body.velocity.x = velx;
                     player.body.gravity.y = (2 * -vely * velx) / (60 * moves[pos] + 1);
+                    
+                    // Display the current move
+                    temptext.innerHTML += `<br>Jump ${pos + 1}: ${moves[pos]}`;
+                    
                     pos++;
                 } else {
                     if (firstTime && player.body.x >= 14 * 60 + 15) {
@@ -149,9 +153,9 @@
                         sun.body.enable = false;
                         player.body.velocity.x = 0;
                         
-                        // Display the solution after reaching the finish line
+                        // Display the final solution message
                         let solution = "SOLUTION";
-                        temptext.innerHTML = temptext.innerHTML + "<br><br>" + solution.bold() + "<br>" + moves;
+                        temptext.innerHTML += `<br><br>${solution.bold()}<br>${moves}`;
                     }
                 }
             }

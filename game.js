@@ -7,7 +7,7 @@
     let pos = 0;
     let firstTime = true;
     let onGround = true;
-    const game = new Phaser.Game(320, 240, Phaser.AUTO, 'mynetwork');
+    const game = new Phaser.Game(360, 270, Phaser.AUTO, 'mynetwork');
     const game_length = 1850;
     const game_height = game.height;
     const ground_height = game_height - 2*unit;
